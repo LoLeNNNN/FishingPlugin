@@ -1,0 +1,5 @@
+name: FishingPlugin
+version: '1.0'
+main: org.src.FishingPlugin
+api-version: '1.21'
+authors: [ brokolnn ]
