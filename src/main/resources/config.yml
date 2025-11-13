@@ -7,35 +7,48 @@ loot:
   # Chance to replace vanilla fishing loot with custom loot (0.0 - 1.0)
   replacement-chance: 0.5
 
+  # Luck of the Sea multiplier per level
+  # Formula: modifiedWeight = baseWeight * (1 + luckLevel * luck-multiplier-per-level * (rarity - 1))
+  # Higher values = bigger boost for rare items with Luck of the Sea
+  # Example: with 0.25, Luck III gives 75% bonus to legendary items (rarity 5)
+  luck-multiplier-per-level: 0.25
+
   # Custom loot items (weight determines spawn probability)
+  # Rarity values: common(1), uncommon(2), rare(3), epic(4), legendary(5)
+  # Higher rarity items get bigger boost from Luck of the Sea enchantment
   common_cod:
     material: COD
     amount: 1
     weight: 40.0
+    rarity: common
     displayName: "&bОбычная треска"
 
   common_salmon:
     material: SALMON
     amount: 1
     weight: 30.0
+    rarity: common
     displayName: "&bОбычный лосось"
 
   uncommon_tropical:
     material: TROPICAL_FISH
     amount: 1
     weight: 20.0
+    rarity: uncommon
     displayName: "&aTропическая рыба"
 
   rare_pufferfish:
     material: PUFFERFISH
     amount: 1
     weight: 8.0
+    rarity: rare
     displayName: "&dРедкая рыба-шар"
 
   epic_diamond:
     material: DIAMOND
     amount: 1
     weight: 1.5
+    rarity: epic
     displayName: "&5&lЭпический алмаз"
     lore:
       - "&7Найден в глубинах океана"
@@ -45,6 +58,7 @@ loot:
     material: ENCHANTED_BOOK
     amount: 1
     weight: 0.5
+    rarity: legendary
     displayName: "&6&lЛегендарная книга"
     lore:
       - "&7Древняя книга знаний"

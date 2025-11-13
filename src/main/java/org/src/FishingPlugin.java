@@ -72,8 +72,16 @@ public class FishingPlugin extends JavaPlugin implements Listener {
             if (caught instanceof Item) {
                 ItemStack caughtItem = ((Item) caught).getItemStack();
 
+                // Get Luck of the Sea level from fishing rod
+                ItemStack fishingRod = player.getInventory().getItemInMainHand();
+                int luckLevel = 0;
+                if (fishingRod != null && fishingRod.getType() == org.bukkit.Material.FISHING_ROD) {
+                    luckLevel = fishingRod.getEnchantmentLevel(org.bukkit.enchantments.Enchantment.LUCK_OF_THE_SEA);
+                }
+
                 // Try to replace vanilla item with custom loot (FIX for Issue #3)
-                ItemStack customLoot = lootManager.tryReplaceVanillaItem(caughtItem);
+                // Now with Luck of the Sea support!
+                ItemStack customLoot = lootManager.tryReplaceVanillaItem(caughtItem, luckLevel);
                 if (customLoot != null) {
                     caughtItem = customLoot;
                 }
