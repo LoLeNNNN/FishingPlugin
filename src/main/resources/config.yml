@@ -10,11 +10,25 @@ loot:
   # Luck of the Sea multiplier per level
   # Formula: modifiedWeight = baseWeight * (1 + luckLevel * luck-multiplier-per-level * (rarity - 1))
   # Higher values = bigger boost for rare items with Luck of the Sea
-  # Example: with 0.25, Luck III gives 75% bonus to legendary items (rarity 5)
+  # Example: with 0.25, Luck III gives 100% bonus to legendary items (rarity 5)
   luck-multiplier-per-level: 0.25
 
-  # Custom loot items (weight determines spawn probability)
-  # Rarity values: common(1), uncommon(2), rare(3), epic(4), legendary(5)
+  # Define your own custom rarity levels here!
+  # You can add as many rarities as you want without touching the code
+  # Default rarities: common(1), uncommon(2), rare(3), epic(4), legendary(5)
+  # Higher numbers = rarer items = bigger boost from Luck of the Sea
+  custom-rarities:
+    # Example custom rarities (uncomment to use):
+    # mythic: 6
+    # divine: 7
+    # celestial: 8
+    # god-tier: 10
+    # trash: 0
+
+  # Custom loot items
+  # Rarity can be:
+  # 1. A named rarity (common, uncommon, rare, epic, legendary, or your custom ones)
+  # 2. A direct number (1, 2, 3, etc.) - higher = rarer
   # Higher rarity items get bigger boost from Luck of the Sea enchantment
   common_cod:
     material: COD
@@ -63,3 +77,25 @@ loot:
     lore:
       - "&7Древняя книга знаний"
       - "&7Редкость: &6Легендарный"
+
+  # Example of using custom rarity (uncomment custom-rarities above first!)
+  # mythic_nether_star:
+  #   material: NETHER_STAR
+  #   amount: 1
+  #   weight: 0.1
+  #   rarity: mythic  # Uses custom rarity level 6
+  #   displayName: "&d&lМифическая звезда"
+  #   lore:
+  #     - "&7Невероятно редкая находка!"
+  #     - "&7Редкость: &dМифический"
+
+  # Example of using direct numeric rarity
+  # ultra_rare_elytra:
+  #   material: ELYTRA
+  #   amount: 1
+  #   weight: 0.05
+  #   rarity: 10  # Direct number - extremely rare!
+  #   displayName: "&c&lУльтра редкие элитры"
+  #   lore:
+  #     - "&7Почти невозможно поймать!"
+  #     - "&7Редкость: &cУльтра редкий (10)"

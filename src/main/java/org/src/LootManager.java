@@ -13,12 +13,13 @@ public class LootManager {
     private final FishingPlugin plugin;
     private final Logger logger;
     private final Map<ItemStack, LootEntry> lootTable = new HashMap<>();
+    private final Map<String, Integer> customRarityLevels = new HashMap<>();
     private double totalWeight = 0.0;
 
     // Inner class to store loot entry data
     private static class LootEntry {
         final double baseWeight;
-        final int rarity; // 1=common, 2=uncommon, 3=rare, 4=epic, 5=legendary
+        final int rarity; // Numeric rarity level (higher = rarer)
 
         LootEntry(double baseWeight, int rarity) {
             this.baseWeight = baseWeight;
@@ -29,7 +30,32 @@ public class LootManager {
     public LootManager(FishingPlugin plugin) {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
+        loadCustomRarities();
         loadLootTable();
+    }
+
+    /**
+     * Loads custom rarity definitions from config
+     */
+    private void loadCustomRarities() {
+        customRarityLevels.clear();
+
+        // Load default rarities for backward compatibility
+        customRarityLevels.put("common", 1);
+        customRarityLevels.put("uncommon", 2);
+        customRarityLevels.put("rare", 3);
+        customRarityLevels.put("epic", 4);
+        customRarityLevels.put("legendary", 5);
+
+        // Load custom rarities from config if defined
+        ConfigurationSection raritiesSection = plugin.getConfig().getConfigurationSection("loot.custom-rarities");
+        if (raritiesSection != null) {
+            for (String rarityName : raritiesSection.getKeys(false)) {
+                int level = raritiesSection.getInt(rarityName);
+                customRarityLevels.put(rarityName.toLowerCase(), level);
+                logger.info("Loaded custom rarity: " + rarityName + " = " + level);
+            }
+        }
     }
 
     private void loadLootTable() {
@@ -114,21 +140,35 @@ public class LootManager {
     }
 
     /**
-     * Parses rarity string to integer value
-     * @param rarityStr The rarity string (common, uncommon, rare, epic, legendary)
-     * @return Rarity level (1-5)
+     * Parses rarity value to integer level
+     * Supports:
+     * 1. Direct numeric values (e.g., "1", "10", "100")
+     * 2. Named rarities from custom-rarities config (e.g., "mythic", "divine")
+     * 3. Default rarities (common, uncommon, rare, epic, legendary)
+     *
+     * @param rarityStr The rarity string or number
+     * @return Rarity level (numeric value, higher = rarer)
      */
     private int parseRarity(String rarityStr) {
         if (rarityStr == null) return 1;
-        switch (rarityStr.toLowerCase()) {
-            case "common": return 1;
-            case "uncommon": return 2;
-            case "rare": return 3;
-            case "epic": return 4;
-            case "legendary": return 5;
-            default:
-                logger.warning("Unknown rarity: " + rarityStr + ", defaulting to common");
+
+        // Try parsing as direct number first
+        try {
+            int directValue = Integer.parseInt(rarityStr);
+            if (directValue < 1) {
+                logger.warning("Rarity level must be >= 1, got: " + directValue + ", defaulting to 1");
                 return 1;
+            }
+            return directValue;
+        } catch (NumberFormatException e) {
+            // Not a number, try looking up as named rarity
+            String lowerRarity = rarityStr.toLowerCase();
+            if (customRarityLevels.containsKey(lowerRarity)) {
+                return customRarityLevels.get(lowerRarity);
+            } else {
+                logger.warning("Unknown rarity: " + rarityStr + ", defaulting to common (1)");
+                return 1;
+            }
         }
     }
 
@@ -236,12 +276,14 @@ public class LootManager {
     }
 
     /**
-     * Reloads the loot table from config
+     * Reloads the loot table and custom rarities from config
      */
     public void reload() {
-        logger.info("Reloading loot table...");
+        logger.info("Reloading loot manager...");
+        loadCustomRarities();
         loadLootTable();
         logger.info("Loot table reloaded with " + lootTable.size() + " entries (total weight: " + totalWeight + ")");
+        logger.info("Custom rarities loaded: " + customRarityLevels.size());
     }
 
     /**
