@@ -69,7 +69,19 @@ public class LootManager {
             return;
         }
 
+        // List of reserved keys that are not loot items
+        Set<String> reservedKeys = new HashSet<>(Arrays.asList(
+            "replacement-chance",
+            "luck-multiplier-per-level",
+            "custom-rarities"
+        ));
+
         for (String key : lootSection.getKeys(false)) {
+            // Skip reserved configuration keys
+            if (reservedKeys.contains(key)) {
+                continue;
+            }
+
             ConfigurationSection itemSection = lootSection.getConfigurationSection(key);
             if (itemSection == null) {
                 logger.warning("Invalid loot entry: " + key);
@@ -230,10 +242,16 @@ public class LootManager {
             }
         }
 
-        // Fallback: return the last item if somehow we didn't return anything
-        ItemStack fallback = lootTable.keySet().iterator().next();
-        logger.warning("Weighted random selection failed, returning fallback item: " + fallback.getType());
-        return fallback.clone();
+        // Fallback: return the first item if somehow we didn't return anything
+        if (!lootTable.isEmpty()) {
+            ItemStack fallback = lootTable.keySet().iterator().next();
+            logger.warning("Weighted random selection failed, returning fallback item: " + fallback.getType());
+            return fallback.clone();
+        }
+
+        // Ultimate fallback if loot table is completely empty
+        logger.severe("Loot table is empty during item selection! This should never happen.");
+        return null;
     }
 
     /**
