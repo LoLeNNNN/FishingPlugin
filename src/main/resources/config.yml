@@ -1,3 +1,51 @@
 config-version: 1.0
 config:
   ExperiencePerCatch: 5
+
+# Custom loot configuration
+loot:
+  # Chance to replace vanilla fishing loot with custom loot (0.0 - 1.0)
+  replacement-chance: 0.5
+
+  # Custom loot items (weight determines spawn probability)
+  common_cod:
+    material: COD
+    amount: 1
+    weight: 40.0
+    displayName: "&bОбычная треска"
+
+  common_salmon:
+    material: SALMON
+    amount: 1
+    weight: 30.0
+    displayName: "&bОбычный лосось"
+
+  uncommon_tropical:
+    material: TROPICAL_FISH
+    amount: 1
+    weight: 20.0
+    displayName: "&aTропическая рыба"
+
+  rare_pufferfish:
+    material: PUFFERFISH
+    amount: 1
+    weight: 8.0
+    displayName: "&dРедкая рыба-шар"
+
+  epic_diamond:
+    material: DIAMOND
+    amount: 1
+    weight: 1.5
+    displayName: "&5&lЭпический алмаз"
+    lore:
+      - "&7Найден в глубинах океана"
+      - "&7Редкость: &5Эпический"
+
+  legendary_enchanted_book:
+    material: ENCHANTED_BOOK
+    amount: 1
+    weight: 0.5
+    displayName: "&6&lЛегендарная книга"
+    lore:
+      - "&7Древняя книга знаний"
+      - "&7Редкость: &6Легендарный"

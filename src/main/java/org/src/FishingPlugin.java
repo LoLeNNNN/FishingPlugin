@@ -21,6 +21,7 @@ import java.util.*;
 public class FishingPlugin extends JavaPlugin implements Listener {
     private final double CONFIG_VERSION = 1.0;
     private LocaleManager localeManager;
+    private LootManager lootManager;
     private JavaPlugin plugin;
     private Set<UUID> FishingStatus = new HashSet<>();
 
@@ -35,6 +36,10 @@ public class FishingPlugin extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         saveDefaultConfig();
         updateConfig();
+
+        // Initialize LootManager after config is loaded
+        this.lootManager = new LootManager(this);
+
         if (!getDataFolder().exists()) {
             getDataFolder().mkdir();
         }
@@ -66,6 +71,13 @@ public class FishingPlugin extends JavaPlugin implements Listener {
             Entity caught = event.getCaught();
             if (caught instanceof Item) {
                 ItemStack caughtItem = ((Item) caught).getItemStack();
+
+                // Try to replace vanilla item with custom loot (FIX for Issue #3)
+                ItemStack customLoot = lootManager.tryReplaceVanillaItem(caughtItem);
+                if (customLoot != null) {
+                    caughtItem = customLoot;
+                }
+
                 if (!skillCheckTasks.containsKey(event.getPlayer().getUniqueId())) {
                     if (!FishingStatus.contains(playerId)) {
                         FishingStatus.add(playerId);
